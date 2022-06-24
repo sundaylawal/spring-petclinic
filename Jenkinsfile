@@ -2,9 +2,16 @@ pipeline {
     agent any
     environment {
         DOCKER_USER     = credentails('docker-username')
-        DOCKER_PASSWORD = credentails('docker-password')
-    }
+        DOCKER_PASSWORD = credentails('docker-password') 
+    } 
+        
     stages {
+        stage('pullsourceCode'){
+            steps{ 
+                sh 'git branch: 'main', credentialsId: '1308e8bf-a4dd-4e14-a528-0a63b4496939', url: 'https://github.com/sundaylawal/spring-petclinic.git'
+            }
+        }
+    
         stage('BuildCode'){
             steps{ 
                 sh 'mvn install -DskipTests=true'
@@ -21,7 +28,7 @@ pipeline {
         stage('Building Docker Image') { 
             steps {
                 echo '=== Creating Docker image==='
-                sh 'docker build -t test-image:1.0 .' 
+                sh 'docker build -t slawal-image:1.0 .' 
             }
         }
 
@@ -34,14 +41,10 @@ pipeline {
         stage('Push Docker Image to docker hub') {
             steps {
                 echo '=== Pushing Petclinic Docker Image ==='
-                sh 'sudo docker push $DOCKER_USER/test-image:1.0'
+                sh 'sudo docker push $DOCKER_USER/slawal-image:1.0'
             }
         }
-        stage('Deploy to K8Ss') {
-            steps {
-               sh ' bash && export KUBECONFIG=/var/lib/jenkins/admin.conf && kubectl apply -f deployment.yaml'
-            }
-        }
+        
         stage ('Run Docker on k8s') {
 	      steps{
 	        	sshagent(['k8s-server-Private']) {
