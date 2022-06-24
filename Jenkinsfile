@@ -1,8 +1,5 @@
 pipeline {
-        agent {
-                any
-        }
-        
+        agent any
     environment {
         DOCKER_USER     = credentails('docker-username')
         DOCKER_PASSWORD = credentails('docker-password') 
