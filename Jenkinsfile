@@ -4,6 +4,9 @@ pipeline {
         DOCKER_USER     = credentials('docker-username')
         DOCKER_PASSWORD = credentials('docker-password') 
     } 
+        tools {
+                maven 'maven'
+        }
         
     stages {
         stage('pullsourceCode'){
