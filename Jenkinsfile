@@ -44,7 +44,7 @@ pipeline {
         }
         stage ('Run Docker on k8s') {
 	      steps{
-	        	sshagent(credentials : ['k8s-server-Private']) {
+	        	sshagent(['k8s-server-Private']) {
 		         sh 'ssh -o StrictHostKeyChecking=no ec2-user@3.145.58.235 "sudo docker login --username $DOCKER_USER --password $DOCKER_PASSWORD && kubectl apply -f petclinic.yaml"'
 		        }
 	        }
