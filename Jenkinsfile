@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+        agent {any}
     environment {
         DOCKER_USER     = credentails('docker-username')
         DOCKER_PASSWORD = credentails('docker-password') 
@@ -35,7 +35,7 @@ pipeline {
         stage('TAG Docker Image') {
             steps {
                 echo '=== Tagging petclinic Docker Image ==='
-                sh 'sudo docker tag test-image $DOCKER_USER/slawal-image:1.0'
+                sh 'sudo docker tag slawal-image $DOCKER_USER/slawal-image:1.0'
             }
         }
         stage('Push Docker Image to docker hub') {
