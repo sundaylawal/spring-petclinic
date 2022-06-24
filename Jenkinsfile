@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('pullsourceCode'){
             steps{ 
-                sh 'git branch: 'main', credentialsId: '1308e8bf-a4dd-4e14-a528-0a63b4496939', url: 'https://github.com/sundaylawal/spring-petclinic.git'
+                git branch: 'main', credentialsId: '1308e8bf-a4dd-4e14-a528-0a63b4496939', url: 'https://github.com/sundaylawal/spring-petclinic.git
             }
         }
     
