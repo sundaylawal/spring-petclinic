@@ -1,0 +1,44 @@
+pipeline{
+    agent any
+    tools {
+    maven 'Maven'
+  }
+    stages{
+        stage('Pull Source Code from GitHub') {
+            steps {
+                git branch: 'main', credentialsId: 'git', url: 'https://github.com/CloudHight/Pet-Adoption-End-To-End-Project-Application-Team_US.git'
+            }
+        }
+        
+        stage('Build Code') {
+            steps {
+               sh 'mvn package -Dmaven.test.skip'
+            }
+        }
+           stage('Send Artifacts') {
+                steps {
+                    sshagent(['docker_host']) {  
+                        sh 'scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/swarm-project/target/spring-petclinic-2.4.2.war  ec2-user@34.205.174.40:/opt/docker'
+                    }
+                }
+           
+            }
+             stage('Create docker swarm cluster') {
+                steps {
+                    sshagent(['ansible_host']) {  
+                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@100.24.113.109 ansible-playbook -i /etc/ansible/hosts /etc/ansible/swarm.yml'
+                    }
+                }
+           
+            }
+            stage('Deploy Service') {
+                steps {
+                    sshagent(['ansible_host']) {  
+                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@100.24.113.109 ansible-playbook -i /etc/ansible/hosts /etc/ansible/container-swarm.yml --limit 34.205.174.40'
+                    }
+                }
+           
+            }
+            
+    }
+}
